@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+.env
+*.mp4
+*.pt
+*.pth
+*.zip
+outputs/
+frames/
+full_frames/
+full_masks/
+checkpoints/
