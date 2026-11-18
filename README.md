@@ -1,28 +1,22 @@
 # Visual Understanding
 
-Bu proje tek bir RGB robot demonstrasyonundan nesne ve kavrayıcı
-yörüngeleri ile görev fazlarını çıkarır.
+This project analyzes a single RGB video of a robot performing a manipulation task. It extracts 2D object and gripper trajectories and estimates the task phase for each analyzed frame.
 
-- SAM 2 nesne maskesini video boyunca takip eder.
-- CoTracker3 kavrayıcı üzerinde seçilen noktaları takip eder.
-- Kural tabanlı FSM, hareket ölçümlerinden görev fazlarını tahmin eder.
-- `pipeline/process_video.py` ana akışı, CSV ve görsel çıktıları üretir.
+- **SAM 2** segments the selected object and tracks its mask across video frames.
+- **CoTracker3** tracks selected points on the robot gripper.
+- A **rule-based finite-state machine (FSM)** uses motion measurements to estimate task phases such as approach, possible grasp, holding, transport, and possible release.
+- The main pipeline in `pipeline/process_video.py` generates CSV results, an annotated video, and a task-phase timeline.
 
-## Çalıştırma
+## Running the Pipeline
 
-Ana işlev `pipeline.process_video.process_video`. Ham video,
-SAM 2.1 Tiny ağırlıkları, başlangıç maskesi, maskenin referans karesi
-ve kavrayıcı başlangıç noktaları girdi olarak verilir. Başlangıç
-maskesi ve noktalar bu sürümde elle seçilir. İlk deney Colab'da,
-GPU ile çalıştırıldı. Ham video ve model ağırlıkları repoda yoktur.
+The main entry point is `pipeline.process_video.process_video`. It takes the input video, the SAM 2.1 Tiny checkpoint, an initial object mask and its reference frame, and the starting coordinates and frame for the gripper points.
 
-## ArUco entegrasyonu
+In the current version, the initial mask and gripper points are selected manually. The prototype was tested in Google Colab with a GPU. The original video and model weights are not included in this repository.
 
-Örnek kareler ve FSM CSV'si ayrı paylaşım paketindedir. ArUco
-çıktısını aynı kare dizisinde üretin ve `frame` üzerinden eşleştirin.
-Kare dizisi 10 FPS'tir. ArUco modülü henüz eklenmemiştir.
+## Validation
 
-## Doğrulama
+On the development video, the modular FSM reproduced the previous phase predictions for **277 out of 277 frames**. This checks that the refactored pipeline preserves the previous results. It does not measure task recognition accuracy on unseen videos.
 
-Modüler FSM, geliştirme videosundaki önceki çıktıyı 277/277 karede
-yeniden üretti. Bu sayı yeni videolardaki görev tanıma doğruluğu değildir.
+## Future Work
+
+A planned extension is to use ArUco markers and a calibrated camera to estimate 3D marker poses and combine them with the existing 2D tracking results. This feature is not included in the current version.
